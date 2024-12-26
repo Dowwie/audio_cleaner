@@ -6,10 +6,10 @@ Clean background noise from audio files using spectral subtraction.
 
 ```bash
 # Install using pipx (recommended)
-pipx install git+https://github.com/Dowwie/audio_cleaner/audio-cleaner.git
+pipx install git+https://github.com/Dowwie/audio-cleaner.git
 
 # Or install using pip
-pip install git+https://github.com/Dowwie/audio_cleaner/audio-cleaner.git
+pip install git+https://github.com/Dowwie/audio-cleaner.git
 ```
 
 ## Usage
