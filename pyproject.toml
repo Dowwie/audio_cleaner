@@ -1,0 +1,23 @@
+[project]
+name = "audio-cleaner"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+
+[project.scripts]
+audio-cleaner = "audio_cleaner.__main__:main"
+
+dependencies = [
+    "librosa>=0.10.2.post1",
+    "loguru>=0.7.3",
+    "numba>=0.60.0",
+    "numpy>=2.0.2",
+    "scipy>=1.14.1",
+    "soundfile>=0.12.1",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3.4",
+]

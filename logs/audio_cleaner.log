@@ -1,0 +1,177 @@
+2024-12-26 15:03:22.150 | INFO     | __main__:main:67 - Starting Audio Cleaner
+2024-12-26 15:03:22.150 | DEBUG    | __main__:main:68 - Arguments: Namespace(input_file=PosixPath('data/James Hollis - Creating A Life.mp3'), output_file=PosixPath('data/output.mp3'), noise_factor=0.8, duration=2.0, sample_rate=44100, log_file=PosixPath('logs/audio_cleaner.log'))
+2024-12-26 15:03:22.151 | DEBUG    | audio_cleaner.audio_processor:__init__:13 - Initialized AudioProcessor with sample rate 44100Hz
+2024-12-26 15:03:22.151 | INFO     | audio_cleaner.audio_processor:process_file:141 - Processing audio file: data/James Hollis - Creating A Life.mp3 -> data/output.mp3
+2024-12-26 15:03:22.151 | INFO     | audio_cleaner.audio_processor:load_audio:17 - Loading audio file: data/James Hollis - Creating A Life.mp3
+2024-12-26 15:04:02.287 | INFO     | audio_cleaner.audio_processor:load_audio:21 - Loaded audio file: duration=5525.56s, sample_rate=44100Hz
+2024-12-26 15:04:02.511 | DEBUG    | audio_cleaner.audio_processor:load_audio:24 - Signal shape=(243677185,), min=-0.858, max=1.010
+2024-12-26 15:04:02.511 | DEBUG    | audio_cleaner.audio_processor:process_file:148 - Loading completed in 40.36s
+2024-12-26 15:04:02.511 | INFO     | audio_cleaner.audio_processor:reduce_noise:49 - Starting noise reduction with factor=0.8
+2024-12-26 15:04:02.511 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:54 - Using first 2.0s (88200 samples) for noise profile
+2024-12-26 15:04:02.512 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:59 - Computing STFT of noise sample
+2024-12-26 15:04:02.569 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:61 - Noise profile shape=(1025,)
+2024-12-26 15:04:02.569 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:64 - Computing STFT of full signal
+2024-12-26 15:04:14.171 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:66 - STFT shape=(1025, 475933)
+2024-12-26 15:12:20.021 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:69 - Magnitude range: 0.000 to 201.068
+2024-12-26 15:12:20.060 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:72 - Applying noise reduction
+2024-12-26 15:12:34.488 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:76 - Reduced magnitude range: 0.000 to 200.149
+2024-12-26 15:12:34.517 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:81 - Reconstructing signal
+2024-12-26 15:19:46.555 | INFO     | audio_cleaner.audio_processor:reduce_noise:89 - Noise reduction complete. Average power reduction: 1.1dB
+2024-12-26 15:19:47.967 | DEBUG    | audio_cleaner.audio_processor:process_file:154 - Processing completed in 945.45s
+2024-12-26 15:19:47.975 | INFO     | audio_cleaner.audio_processor:save_audio:113 - Saving audio to data/output.mp3
+2024-12-26 15:19:48.127 | DEBUG    | audio_cleaner.audio_processor:save_audio:114 - Signal stats: shape=(243677184,), min=-0.836, max=1.004
+2024-12-26 15:21:26.156 | ERROR    | audio_cleaner.audio_processor:save_audio:124 - Failed to save audio to data/output.mp3: System error.
+2024-12-26 15:21:26.163 | ERROR    | audio_cleaner.audio_processor:process_file:168 - Failed to process audio file
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/__main__.py", line 92, in <module>
+    sys.exit(main())
+    │   │    └ <function main at 0x10ebe2e80>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/__main__.py", line 74, in main
+    processor.process_file(
+    │         └ <function AudioProcessor.process_file at 0x10f8b3f60>
+    └ <audio_cleaner.audio_processor.AudioProcessor object at 0x10f3199a0>
+
+> File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/audio_processor.py", line 158, in process_file
+    self.save_audio(processed_signal, output_path, sr)
+    │    │          │                 │            └ 44100
+    │    │          │                 └ PosixPath('data/output.mp3')
+    │    │          └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │    └ <function AudioProcessor.save_audio at 0x10f8b3ec0>
+    └ <audio_cleaner.audio_processor.AudioProcessor object at 0x10f3199a0>
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/audio_processor.py", line 120, in save_audio
+    sf.write(str(output_path), signal, sample_rate)
+    │  │         │             │       └ 44100
+    │  │         │             └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │  │         └ PosixPath('data/output.mp3')
+    │  └ <function write at 0x10ec69580>
+    └ <module 'soundfile' from '/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py'>
+
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 345, in write
+    f.write(data)
+    │ │     └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │ └ <function SoundFile.write at 0x10ec6af20>
+    └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1020, in write
+    written = self._array_io('write', data, len(data))
+              │    │                  │         └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+              │    │                  └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+              │    └ <function SoundFile._array_io at 0x10ec6b7e0>
+              └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1344, in _array_io
+    return self._cdata_io(action, cdata, ctype, frames)
+           │    │         │       │      │      └ 243677184
+           │    │         │       │      └ 'float'
+           │    │         │       └ <cdata 'float *' 0x7f97651aa000>
+           │    │         └ 'write'
+           │    └ <function SoundFile._cdata_io at 0x10ec6b880>
+           └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1354, in _cdata_io
+    _error_check(self._errorcode)
+    │            │    └ <property object at 0x10ec742c0>
+    │            └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+    └ <function _error_check at 0x10ec69bc0>
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1407, in _error_check
+    raise LibsndfileError(err, prefix=prefix)
+          │               │           └ ''
+          │               └ 2
+          └ <class 'soundfile.LibsndfileError'>
+
+soundfile.LibsndfileError: System error.
+2024-12-26 15:21:26.352 | ERROR    | __main__:main:87 - An error occurred
+Traceback (most recent call last):
+
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/__main__.py", line 92, in <module>
+    sys.exit(main())
+    │   │    └ <function main at 0x10ebe2e80>
+    │   └ <built-in function exit>
+    └ <module 'sys' (built-in)>
+
+> File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/__main__.py", line 74, in main
+    processor.process_file(
+    │         └ <function AudioProcessor.process_file at 0x10f8b3f60>
+    └ <audio_cleaner.audio_processor.AudioProcessor object at 0x10f3199a0>
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/audio_processor.py", line 158, in process_file
+    self.save_audio(processed_signal, output_path, sr)
+    │    │          │                 │            └ 44100
+    │    │          │                 └ PosixPath('data/output.mp3')
+    │    │          └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │    └ <function AudioProcessor.save_audio at 0x10f8b3ec0>
+    └ <audio_cleaner.audio_processor.AudioProcessor object at 0x10f3199a0>
+
+  File "/Users/dowwie/Projects/audio_cleaner/src/audio_cleaner/audio_processor.py", line 120, in save_audio
+    sf.write(str(output_path), signal, sample_rate)
+    │  │         │             │       └ 44100
+    │  │         │             └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │  │         └ PosixPath('data/output.mp3')
+    │  └ <function write at 0x10ec69580>
+    └ <module 'soundfile' from '/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py'>
+
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 345, in write
+    f.write(data)
+    │ │     └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+    │ └ <function SoundFile.write at 0x10ec6af20>
+    └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1020, in write
+    written = self._array_io('write', data, len(data))
+              │    │                  │         └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+              │    │                  └ array([0., 0., 0., ..., 0., 0., 0.], dtype=float32)
+              │    └ <function SoundFile._array_io at 0x10ec6b7e0>
+              └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1344, in _array_io
+    return self._cdata_io(action, cdata, ctype, frames)
+           │    │         │       │      │      └ 243677184
+           │    │         │       │      └ 'float'
+           │    │         │       └ <cdata 'float *' 0x7f97651aa000>
+           │    │         └ 'write'
+           │    └ <function SoundFile._cdata_io at 0x10ec6b880>
+           └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1354, in _cdata_io
+    _error_check(self._errorcode)
+    │            │    └ <property object at 0x10ec742c0>
+    │            └ SoundFile('data/output.mp3', mode='w', samplerate=44100, channels=1, format='MP3', subtype='MPEG_LAYER_III', endian='FILE')
+    └ <function _error_check at 0x10ec69bc0>
+  File "/Users/dowwie/Projects/audio_cleaner/.venv/lib/python3.12/site-packages/soundfile.py", line 1407, in _error_check
+    raise LibsndfileError(err, prefix=prefix)
+          │               │           └ ''
+          │               └ 2
+          └ <class 'soundfile.LibsndfileError'>
+
+soundfile.LibsndfileError: System error.
+2024-12-26 15:25:28.587 | INFO     | __main__:main:67 - Starting Audio Cleaner
+2024-12-26 15:25:28.588 | DEBUG    | __main__:main:68 - Arguments: Namespace(input_file=PosixPath('data/James Hollis - Creating A Life.mp3'), output_file=PosixPath('data/output.mp3'), noise_factor=0.8, duration=2.0, sample_rate=44100, log_file=PosixPath('logs/audio_cleaner.log'))
+2024-12-26 15:25:28.588 | DEBUG    | audio_cleaner.audio_processor:__init__:13 - Initialized AudioProcessor with sample rate 44100Hz
+2024-12-26 15:25:28.588 | INFO     | audio_cleaner.audio_processor:process_file:141 - Processing audio file: data/James Hollis - Creating A Life.mp3 -> data/output.mp3
+2024-12-26 15:25:28.588 | INFO     | audio_cleaner.audio_processor:load_audio:17 - Loading audio file: data/James Hollis - Creating A Life.mp3
+2024-12-26 15:25:48.670 | INFO     | audio_cleaner.audio_processor:load_audio:21 - Loaded audio file: duration=5525.56s, sample_rate=44100Hz
+2024-12-26 15:25:48.857 | DEBUG    | audio_cleaner.audio_processor:load_audio:24 - Signal shape=(243677185,), min=-0.858, max=1.010
+2024-12-26 15:25:48.857 | DEBUG    | audio_cleaner.audio_processor:process_file:148 - Loading completed in 20.27s
+2024-12-26 15:25:48.857 | INFO     | audio_cleaner.audio_processor:reduce_noise:49 - Starting noise reduction with factor=0.8
+2024-12-26 15:25:48.857 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:54 - Using first 2.0s (88200 samples) for noise profile
+2024-12-26 15:25:48.858 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:59 - Computing STFT of noise sample
+2024-12-26 15:25:48.880 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:61 - Noise profile shape=(1025,)
+2024-12-26 15:25:48.881 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:64 - Computing STFT of full signal
+2024-12-26 15:25:56.721 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:66 - STFT shape=(1025, 475933)
+2024-12-26 15:26:49.257 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:69 - Magnitude range: 0.000 to 201.068
+2024-12-26 15:26:49.273 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:72 - Applying noise reduction
+2024-12-26 15:26:56.245 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:76 - Reduced magnitude range: 0.000 to 200.149
+2024-12-26 15:26:56.246 | DEBUG    | audio_cleaner.audio_processor:reduce_noise:81 - Reconstructing signal
+2024-12-26 15:27:38.729 | INFO     | audio_cleaner.audio_processor:reduce_noise:89 - Noise reduction complete. Average power reduction: 1.1dB
+2024-12-26 15:27:40.016 | DEBUG    | audio_cleaner.audio_processor:process_file:154 - Processing completed in 111.16s
+2024-12-26 15:27:40.030 | INFO     | audio_cleaner.audio_processor:save_audio:113 - Saving audio to data/output.mp3
+2024-12-26 15:27:40.174 | DEBUG    | audio_cleaner.audio_processor:save_audio:114 - Signal stats: shape=(243677184,), min=-0.836, max=1.004
+2024-12-26 15:28:15.389 | INFO     | audio_cleaner.audio_processor:save_audio:122 - Saved audio file: size=55.3MB
+2024-12-26 15:28:15.390 | DEBUG    | audio_cleaner.audio_processor:process_file:160 - Saving completed in 35.37s
+2024-12-26 15:28:15.390 | SUCCESS  | audio_cleaner.audio_processor:process_file:163 - Successfully processed audio file in 166.80s (load=20.27s, process=111.16s, save=35.37s)
+2024-12-26 15:28:15.565 | INFO     | __main__:main:80 - Audio Cleaner completed successfully
