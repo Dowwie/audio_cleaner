@@ -44,20 +44,10 @@ def parse_args() -> argparse.Namespace:
         help="Path to log file",
     )
 
-    args = parser.parse_args()
-
-    # Validate input file exists
-    if not args.input_file.exists():
-        parser.error(f"Input file does not exist: {args.input_file}")
-
-    # Ensure output directory exists
-    args.output_file.parent.mkdir(parents=True, exist_ok=True)
-
-    return args
+    return parser.parse_args()
 
 
 def main() -> int:
-    """Main entry point for the application."""
     try:
         args = parse_args()
 
@@ -67,10 +57,17 @@ def main() -> int:
         logger.info("Starting Audio Cleaner")
         logger.debug(f"Arguments: {args}")
 
-        # Initialize processor
-        processor = AudioProcessor(sample_rate=args.sample_rate)
+        # Check if only help was requested
+        if len(sys.argv) == 2 and sys.argv[1] in ["-h", "--help"]:
+            return 0
 
-        # Process file
+        # Validate input file exists
+        if not args.input_file.exists():
+            logger.error(f"Input file does not exist: {args.input_file}")
+            return 1
+
+        # Initialize processor and process file
+        processor = AudioProcessor(sample_rate=args.sample_rate)
         processor.process_file(
             input_path=args.input_file,
             output_path=args.output_file,
