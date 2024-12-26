@@ -48,18 +48,23 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
-    try:
-        args = parse_args()
+    args = parse_args()
 
+    # If help was requested, we're done here
+    if len(sys.argv) == 2 and sys.argv[1] in ["-h", "--help"]:
+        return 0
+
+    # Only import heavy dependencies when we actually need them
+    from loguru import logger
+    from .audio_processor import AudioProcessor
+    from .logging import setup_logging
+
+    try:
         # Set up logging with DEBUG level
         setup_logging(level="DEBUG", log_file=args.log_file)
 
         logger.info("Starting Audio Cleaner")
         logger.debug(f"Arguments: {args}")
-
-        # Check if only help was requested
-        if len(sys.argv) == 2 and sys.argv[1] in ["-h", "--help"]:
-            return 0
 
         # Validate input file exists
         if not args.input_file.exists():

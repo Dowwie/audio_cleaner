@@ -1,7 +1,4 @@
 import time
-import librosa
-import soundfile as sf
-import numpy as np
 from pathlib import Path
 from typing import Union, Tuple, Optional
 from loguru import logger
@@ -10,13 +7,27 @@ from loguru import logger
 class AudioProcessor:
     def __init__(self, sample_rate: int = 44100):
         self.sample_rate = sample_rate
+        self._lazy_imports_done = False
         logger.debug(f"Initialized AudioProcessor with sample rate {sample_rate}Hz")
 
-    def load_audio(self, file_path: Union[str, Path]) -> Tuple[np.ndarray, int]:
+    def _ensure_imports(self) -> None:
+        """Lazily import heavy scientific libraries only when needed."""
+        if not self._lazy_imports_done:
+            import librosa
+            import soundfile as sf
+            import numpy as np
+
+            self.librosa = librosa
+            self.sf = sf
+            self.np = np
+            self._lazy_imports_done = True
+
+    def load_audio(self, file_path: Union[str, Path]) -> Tuple["np.ndarray", int]:
         """Load an audio file and return the signal and sample rate."""
+        self._ensure_imports()
         logger.info(f"Loading audio file: {file_path}")
         try:
-            signal, sr = librosa.load(file_path, sr=self.sample_rate)
+            signal, sr = self.librosa.load(file_path, sr=self.sample_rate)
             duration = len(signal) / sr
             logger.info(
                 f"Loaded audio file: duration={duration:.2f}s, sample_rate={sr}Hz"
@@ -31,10 +42,10 @@ class AudioProcessor:
 
     def reduce_noise(
         self,
-        signal: np.ndarray,
+        signal: "np.ndarray",
         noise_reduce_factor: float = 0.8,
         noise_sample_duration: float = 2.0,
-    ) -> np.ndarray:
+    ) -> "np.ndarray":
         """
         Reduce background noise in the audio signal.
 
@@ -46,6 +57,7 @@ class AudioProcessor:
         Returns:
             Processed audio signal with reduced noise
         """
+        self._ensure_imports()
         logger.info(f"Starting noise reduction with factor={noise_reduce_factor}")
 
         # Calculate noise profile
@@ -57,21 +69,23 @@ class AudioProcessor:
 
         # Compute spectral representation
         logger.debug("Computing STFT of noise sample")
-        noise_profile = np.mean(np.abs(librosa.stft(noise_sample)), axis=1)
+        noise_profile = self.np.mean(
+            self.np.abs(self.librosa.stft(noise_sample)), axis=1
+        )
         logger.debug(f"Noise profile shape={noise_profile.shape}")
 
         # Process full signal
         logger.debug("Computing STFT of full signal")
-        D = librosa.stft(signal)
+        D = self.librosa.stft(signal)
         logger.debug(f"STFT shape={D.shape}")
 
-        mag, phase = librosa.magphase(D)
+        mag, phase = self.librosa.magphase(D)
         logger.debug(f"Magnitude range: {mag.min():.3f} to {mag.max():.3f}")
 
         # Apply noise reduction
         logger.debug("Applying noise reduction")
-        mag_reduced = np.maximum(
-            0, mag - noise_reduce_factor * noise_profile[:, np.newaxis]
+        mag_reduced = self.np.maximum(
+            0, mag - noise_reduce_factor * noise_profile[:, self.np.newaxis]
         )
         logger.debug(
             f"Reduced magnitude range: {mag_reduced.min():.3f} to {mag_reduced.max():.3f}"
@@ -80,12 +94,12 @@ class AudioProcessor:
         # Reconstruct signal
         logger.debug("Reconstructing signal")
         D_reduced = mag_reduced * phase
-        processed = librosa.istft(D_reduced)
+        processed = self.librosa.istft(D_reduced)
 
         # Log reduction stats
-        original_power = np.mean(signal**2)
-        processed_power = np.mean(processed**2)
-        reduction_db = 10 * np.log10(original_power / processed_power)
+        original_power = self.np.mean(signal**2)
+        processed_power = self.np.mean(processed**2)
+        reduction_db = 10 * self.np.log10(original_power / processed_power)
         logger.info(
             f"Noise reduction complete. Average power reduction: {reduction_db:.1f}dB"
         )
@@ -94,7 +108,7 @@ class AudioProcessor:
 
     def save_audio(
         self,
-        signal: np.ndarray,
+        signal: "np.ndarray",
         output_path: Union[str, Path],
         sample_rate: Optional[int] = None,
     ) -> None:
@@ -106,6 +120,7 @@ class AudioProcessor:
             output_path: Path to save the audio file
             sample_rate: Optional sample rate (defaults to self.sample_rate)
         """
+        self._ensure_imports()
         if sample_rate is None:
             sample_rate = self.sample_rate
 
@@ -117,7 +132,7 @@ class AudioProcessor:
 
         try:
             output_path.parent.mkdir(parents=True, exist_ok=True)
-            sf.write(str(output_path), signal, sample_rate)
+            self.sf.write(str(output_path), signal, sample_rate)
             file_size = output_path.stat().st_size
             logger.info(f"Saved audio file: size={file_size/1024/1024:.1f}MB")
         except Exception as e:
